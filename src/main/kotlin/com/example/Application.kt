@@ -1,7 +1,8 @@
 package com.example
 
+import com.example.models.Customer
 import com.example.plugins.*
-import com.example.plugins.routes.User
+import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -11,7 +12,10 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.autohead.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.defaultheaders.*
-import kotlinx.serialization.json.Json
+import io.ktor.server.plugins.requestvalidation.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 
 fun main() {
@@ -25,5 +29,19 @@ fun Application.module() {
     install(ContentNegotiation) {
         json()
     }
-    configureRouting ()
+    install(StatusPages) {
+        exception<RequestValidationException> { call, cause ->
+            call.respond(HttpStatusCode.BadRequest, cause.reasons.joinToString())
+        }
+    }
+    install(RequestValidation) {
+        validate<Customer> { customer ->
+            if (customer.id <= 0) {
+                ValidationResult.Invalid("validation error: customerId format error")
+            } else {
+                ValidationResult.Valid
+            }
+        }
+    }
+    configureRouting()
 }

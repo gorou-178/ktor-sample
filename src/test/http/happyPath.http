@@ -9,6 +9,13 @@ Content-Type: application/json
     "email": "test@example.com"
 }
 
+> {%
+    client.test("Create Customer", function() {
+        client.assert(response.status === 200), "Create Customer is error" }
+    )
+    client.global.set("customerId", "100")
+%}
+
 ###
 
 
@@ -16,18 +23,62 @@ Content-Type: application/json
 GET {{host}}/customer
 Content-Type: application/json
 
+> {%
+    client.test("Get Customer List", function () {
+        client.assert(response.body.json.length > 0, "Get Customer List is Empty")
+    })
+ %}
+
 ###
 
 
 # @name Get Customer
-GET {{host}}/customer/100
+GET {{host}}/customer/{{customerId}}
 Content-Type: application/json
+
+> {%
+    client.test("Get Customer", function() {
+        client.assert(response.status === 200), "Get Customer is error" }
+    )
+%}
 
 ###
 
 
 # @name Delete Customer
-DELETE {{host}}/customer/100
+DELETE {{host}}/customer/{{customerId}}
 Content-Type: application/json
+
+> {%
+    client.test("Delete Customer", function() {
+        client.assert(response.status === 202), "Delete Customer is error" }
+    )
+%}
+
+###
+
+
+# @name Get Customer List is empty
+GET {{host}}/customer
+Content-Type: application/json
+
+> {%
+    client.test("Get Customer List", function () {
+        client.assert(response.status === 200, "Get Customer List is not Empty")
+    })
+%}
+
+###
+
+
+# @name Get Customer
+GET {{host}}/customer/{{customerId}}
+Content-Type: application/json
+
+> {%
+    client.test("Get Customer", function() {
+        client.assert(response.status === 404), "Get Customer is not error" }
+    )
+%}
 
 ###

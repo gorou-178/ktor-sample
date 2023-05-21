@@ -1,0 +1,17 @@
+# @name format error Create Customer
+POST {{host}}/customer
+Content-Type: application/json
+
+{
+    "id": -1,
+    "firstName": "testFirstName",
+    "lastName": "testLastName",
+    "email": "test@example.com"
+}
+
+> {% client.test("format error Create Customer",function(){
+        client.assert(response.status === 400, "format error response is not 400 status code")
+    })
+%}
+
+###

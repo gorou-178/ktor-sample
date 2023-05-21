@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 @OptIn(KtorExperimentalLocationsAPI::class)
 @Location("/{id?}")
 @Serializable
-data class CustomerId(val id: String)
+data class GetCustomerRequest(val id: Int?)
 
 @Serializable
-data class Customer(val id: String, val firstName: String, val lastName: String, val email: String)
+data class Customer(val id: Int, val firstName: String, val lastName: String, val email: String)
 
 val customerStorage = mutableListOf<Customer>()

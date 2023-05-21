@@ -1,7 +1,7 @@
 package com.example.plugins.routes
 
 import com.example.models.Customer
-import com.example.models.CustomerId
+import com.example.models.GetCustomerRequest
 import com.example.models.customerStorage
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -16,35 +16,29 @@ import io.ktor.server.routing.get
 fun Route.customerRouting() {
     route("/customer") {
         get {
-            if (customerStorage.isNotEmpty()) {
-                call.respond(customerStorage)
-            } else {
-                call.respondText("No customers found", status = HttpStatusCode.OK)
-            }
+            call.respond(customerStorage)
         }
-        get<CustomerId> { param ->
-//            val id = param.id ?: return@get call.respondText(
-//                "Missing id",
-//                status = HttpStatusCode.BadRequest
-//            )
-            val customer = customerStorage.find { it.id == param.id } ?: return@get call.respondText(
-                "No customer with id ${param.id}",
-                status = HttpStatusCode.NotFound
-            )
-            call.respond(customer)
+        get<GetCustomerRequest> { param ->
+            this.context.request
+            customerStorage.find { it.id == param.id }?.let {
+                call.respond(it)
+            }
+            return@get call.respondText("No customer with id ${param.id}", status = HttpStatusCode.NotFound)
         }
         post {
             val customer = call.receive<Customer>()
             customerStorage.add(customer)
             call.respondText("Customer stored correctly", status = HttpStatusCode.Created)
         }
-        delete("{id?}") {
-            val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
-            if (customerStorage.removeIf { it.id == id }) {
-                call.respondText("Customer removed correctly", status = HttpStatusCode.Accepted)
-            } else {
-                call.respondText("Not Found", status = HttpStatusCode.NotFound)
+        delete<GetCustomerRequest>() {param ->
+            param.id?.let {
+                if (customerStorage.removeIf { it.id == param.id }) {
+                    call.respondText("Customer removed correctly", status = HttpStatusCode.Accepted)
+                } else {
+                    call.respondText("Not Found", status = HttpStatusCode.NotFound)
+                }
             }
+            return@delete call.respond(HttpStatusCode.BadRequest)
         }
     }
 }
