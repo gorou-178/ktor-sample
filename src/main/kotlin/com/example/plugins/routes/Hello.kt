@@ -7,6 +7,7 @@ import io.ktor.server.locations.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@OptIn(KtorExperimentalLocationsAPI::class)
 fun Routing.helloRoute() {
     get<Hello> { param ->
         val useCase = HelloUseCase()

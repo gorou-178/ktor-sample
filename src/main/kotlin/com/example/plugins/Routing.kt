@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.plugins.routes.customerRouting
 import com.example.plugins.routes.helloRoute
 import com.example.plugins.routes.homeRoute
 import com.example.plugins.routes.userRoute
@@ -12,5 +13,6 @@ fun Application.configureRouting() {
         homeRoute()
         helloRoute()
         userRoute()
+        customerRouting()
     }
 }

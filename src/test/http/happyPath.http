@@ -1,0 +1,33 @@
+# @name Create Customer
+POST {{host}}/customer
+Content-Type: application/json
+
+{
+    "id": 100,
+    "firstName": "testFirstName",
+    "lastName": "testLastName",
+    "email": "test@example.com"
+}
+
+###
+
+
+# @name Get Customer List
+GET {{host}}/customer
+Content-Type: application/json
+
+###
+
+
+# @name Get Customer
+GET {{host}}/customer/100
+Content-Type: application/json
+
+###
+
+
+# @name Delete Customer
+DELETE {{host}}/customer/100
+Content-Type: application/json
+
+###
